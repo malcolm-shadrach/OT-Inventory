@@ -758,15 +758,24 @@
   }
 
   // ─── GOOGLE SHEETS INTEGRATION ───────────────────────────────────────────────
-  function sendToSheet(entry) {
-    if (!APPS_SCRIPT_URL) return;
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry)
-    }).catch(err => console.warn('Sheet sync failed:', err));
-  }
+function sendToSheet(entry) {
+  if (!APPS_SCRIPT_URL) return;
+  const params = new URLSearchParams({
+    action:    entry.action,
+    item:      entry.item,
+    staff:     entry.staff,
+    ward:      entry.ward || '',
+    time:      entry.time,
+    estReturn: entry.estReturn || '',
+    condition: entry.condition || '',
+    notes:     entry.notes || '',
+    date:      entry.date
+  });
+  fetch(APPS_SCRIPT_URL + '?' + params.toString(), {
+    method: 'GET',
+    mode: 'no-cors'
+  }).catch(err => console.warn('Sheet sync failed:', err));
+}
 
   // Close modal on overlay click
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
